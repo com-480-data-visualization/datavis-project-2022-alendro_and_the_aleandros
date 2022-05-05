@@ -1,5 +1,7 @@
 /* index.html part */
-.wrapper {
+.columns {
+  display: flex;
+  flex-direction: column;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -8,16 +10,39 @@
   padding: 1%;
 }
 
-.button {
-  width: 300px;
-  height: 300px;
-  border: 1px solid black;
-  float: left;
-  padding: 10px;
+.rows {
+  display: flex;
+  flex-direction: row;
 }
 
-.button:first-child {
-  margin-right: 20px;
+.button {
+  flex: 1;
+  flex-grow: 1;
+  width: 300px;
+  height: 300px;
+  float: left;
+  padding: 10px;
+  transition: transform 1s, filter 2s ease-in-out;
+  filter: blur(2px);
+  transform: scale(1);
+  margin-right: 10px;
+  margin-left: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.button:hover {
+  filter: blur(0);
+  transform: scale(0.9);
+}
+
+#indexBody {
+  background-color: #333;
+}
+
+.textIndex {
+  color: white;
+  text-align: center;
 }
 
 /* map.html part */
