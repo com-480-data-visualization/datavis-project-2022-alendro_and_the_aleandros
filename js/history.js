@@ -67,7 +67,7 @@ class MapPlot {
 		// similar to scales
 		const projection = d3.geoNaturalEarth1()
 			.rotate([0, 0])
-			.center([8.3, 46.8]) // WorldSpace: Latitude and longitude of center of switzerland
+			.center([-6.48, 54.4]) // WorldSpace: Latitude and longitude of center of Northern Ireland
 			.scale(13000)
 			.translate([this.svg_width / 2, this.svg_height / 2]) // SVG space
 			.precision(.1);
@@ -81,50 +81,50 @@ class MapPlot {
 			.range(["hsl(62,100%,90%)", "hsl(228,30%,20%)"])
 			.interpolate(d3.interpolateHcl);
 
-		const population_promise = d3.csv("https://raw.githubusercontent.com/Noyt/dataVizD3DataDump/master/data_08/cantons-population.csv").then((data) => {
-			let cantonId_to_population = {};
+		const counts_promise = d3.csv("https://raw.githubusercontent.com/com-480-data-visualization/datavis-project-2022-alendro_and_the_aleandros/history_pubs/choropleth/pub_counts/ni_count_history.csv").then((data) => {
+			let lad_to_counts = {};
 			data.forEach((row) => {
-				cantonId_to_population[row.code] =  parseFloat(row.density);
+				lad_to_counts[row.lad] =  parseFloat(row.y_2010);
 			});
-			return cantonId_to_population;
+			return lad_to_counts;
 		});
 
-		const map_promise = d3.json("https://raw.githubusercontent.com/Noyt/dataVizD3DataDump/master/data_08/ch-cantons.json").then((topojson_raw) => {
-			const canton_paths = topojson.feature(topojson_raw, topojson_raw.objects.cantons);
-			return canton_paths.features;
+		const map_promise = d3.json("https://raw.githubusercontent.com/com-480-data-visualization/datavis-project-2022-alendro_and_the_aleandros/history_pubs/choropleth/topo/ni_topo_lgd.json").then((topojson_raw) => {
+			const lgd_paths = topojson.feature(topojson_raw, topojson_raw.objects.lgd);
+			return lgd_paths.features;
 		});
 
 
-		Promise.all([population_promise, map_promise]).then((results) => {
-			let cantonId_to_population = results[0];
+		Promise.all([counts_promise, map_promise]).then((results) => {
+			let lad_to_counts = results[0];
 			let map_data = results[1];
 
-			/* map_data.forEach(canton => {
-				canton.properties.density = cantonId_to_population[canton.id];
+			map_data.forEach(lad => {
+				lad.properties.counts = lad_to_counts[lad.lad];
 			});
 
-			const densities = Object.values(cantonId_to_population); */
+			const counts = Object.values(lad_to_counts);
 
 			// color_scale.domain([d3.quantile(densities, .01), d3.quantile(densities, .99)]);
-			//color_scale.domain([d3.min(densities), d3.max(densities)]);
+			color_scale.domain([d3.min(counts), d3.max(counts)]);
 
 			// Order of creating groups decides what is on top
 			this.map_container = this.svg.append('g');
 			this.label_container = this.svg.append('g'); // <- is on top
 
 			//color the map according to the density of each canton
-			this.map_container.selectAll(".canton")
+			this.map_container.selectAll(".district")
 				.data(map_data)
 				.enter()
 				.append("path")
-				.classed("canton", true)
+				.classed("district", true)
 				.attr("d", path_generator)
 				//.style("fill", (d) => color_scale(d.properties.density));
 
-			this.label_container.selectAll(".canton-label")
+			this.label_container.selectAll(".district-label")
 				.data(map_data)
 				.enter().append("text")
-				.classed("canton-label", true)
+				.classed("district-label", true)
 				.attr("transform", (d) => "translate(" + path_generator.centroid(d) + ")")
 				//.translate((d) => path_generator.centroid(d))
 				.attr("dy", ".35em")
