@@ -1,4 +1,4 @@
-/* index.html part */
+/* index.html */
 .columns {
   display: flex;
   flex-direction: column;
@@ -45,7 +45,7 @@
   text-align: center;
 }
 
-/* map.html part */
+/* map.html */
 #map {
   height: 500px; 
   width : 1000px;
