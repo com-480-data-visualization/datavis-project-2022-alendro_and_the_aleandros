@@ -1,3 +1,4 @@
+const undefinded_color = "rgb(126,126,126)";
 
 class MapPlot {
 
@@ -19,7 +20,13 @@ class MapPlot {
 		const colorbar_g = this.svg.append("g")
 			.attr("id", "colorbar")
 			.attr("transform", "translate(" + top_left[0] + ', ' + top_left[1] + ")")
-			.call(colorbar_axis);
+            .call(colorbar_axis);
+            
+        const undefined_g = this.svg.append("g")
+			.attr("id", "undefinded_color")
+            .attr("transform", "translate(" + top_left[0] + ', ' + 20 + ")");
+            
+        const undef_text = this.svg.append("g").attr("width", 800).attr("height", 200)
 
 		// Create the gradient
 		function range01(steps) {
@@ -51,7 +58,22 @@ class MapPlot {
 			.attr('height', colorbar_size[1])
 			.style('fill', 'url(#colorbar-gradient)')
 			.style('stroke', 'black')
-			.style('stroke-width', '1px')
+            .style('stroke-width', '1px')
+        
+        undefined_g.append('rect')
+			.attr('id', 'undefined-area')
+			.attr('width', 20)
+			.attr('height', 20)
+			.style('fill', undefinded_color)
+			.style('stroke', 'black')
+            .style('stroke-width', '1px')
+
+        undef_text.append('text')
+            .attr('x', 100)
+            .attr('y', 35)
+            .attr('stroke', 'black')
+            .style("font-size", 16)
+            .text("No information available")
 	}
 
 	constructor(svg_element_id) {
@@ -78,20 +100,23 @@ class MapPlot {
 
 		//colormap for population density
 		const color_scale = d3.scaleLog()
-			.range(["hsl(62,100%,90%)", "hsl(228,30%,20%)"])
+			.range(["hsl(88,80%,80%)", "hsl(228,60%,30%)"])
 			.interpolate(d3.interpolateHcl);
 
 		const counts_promise = d3.csv("https://raw.githubusercontent.com/com-480-data-visualization/datavis-project-2022-alendro_and_the_aleandros/history_pubs/choropleth/pub_counts/ni_count_history.csv").then((data) => {
 			let lad_to_counts = {};
 			data.forEach((row) => {
-				lad_to_counts[row.lad] =  parseFloat(row.y_2010);
-			});
+				lad_to_counts[row.lad] = parseFloat(row.Y_2010);
+            });
+            console.log(lad_to_counts);
 			return lad_to_counts;
 		});
 
 		const map_promise = d3.json("https://raw.githubusercontent.com/com-480-data-visualization/datavis-project-2022-alendro_and_the_aleandros/history_pubs/choropleth/topo/ni_topo_lgd.json").then((topojson_raw) => {
-			const lgd_paths = topojson.feature(topojson_raw, topojson_raw.objects.lgd);
-			return lgd_paths.features;
+            console.log(topojson_raw);
+            const lgd_paths = topojson.feature(topojson_raw, topojson_raw.objects.lgd);
+            console.log(lgd_paths);
+            return lgd_paths.features;
 		});
 
 
@@ -100,17 +125,45 @@ class MapPlot {
 			let map_data = results[1];
 
 			map_data.forEach(lad => {
-				lad.properties.counts = lad_to_counts[lad.lad];
+				lad.properties.counts = lad_to_counts[lad.properties.LGDNAME];
 			});
 
-			const counts = Object.values(lad_to_counts);
+            console.log(map_data);
+            const counts = Object.values(lad_to_counts);
+            console.log(counts);
 
 			// color_scale.domain([d3.quantile(densities, .01), d3.quantile(densities, .99)]);
 			color_scale.domain([d3.min(counts), d3.max(counts)]);
-
+            console.log(color_scale(0));
 			// Order of creating groups decides what is on top
 			this.map_container = this.svg.append('g');
 			this.label_container = this.svg.append('g'); // <- is on top
+
+            let mouseOver = function(d) {
+                d3.selectAll(".district")
+                  .transition()
+                  .duration(200)
+                  .style("opacity", .5)
+                  .style("stroke-width", "0px")
+                d3.select(this)
+                  .transition()
+                  .duration(200)
+                  .style("opacity", 1)
+                  .style("stroke", "rgb(25, 25, 25)")
+                  .style("stroke-width", "1px");
+              }
+            
+            let mouseLeave = function(d) {
+                d3.selectAll(".district")
+                  .transition()
+                  .duration(200)
+                  .style("opacity", 1)
+                d3.select(this)
+                  .transition()
+                  .duration(200)
+                  .style("stroke", "rgb(25, 25, 25)")
+                  .style("stroke-width", "0px")
+              }
 
 			//color the map according to the density of each canton
 			this.map_container.selectAll(".district")
@@ -119,7 +172,16 @@ class MapPlot {
 				.append("path")
 				.classed("district", true)
 				.attr("d", path_generator)
-				//.style("fill", (d) => color_scale(d.properties.density));
+				.style("fill", (d) => {
+                    if(typeof(d.properties.counts) == 'undefined') {
+                        return undefinded_color;
+                    }
+                    return color_scale(d.properties.counts);
+                })
+                .style("stroke", "transparent")
+                .style("opacity", 1)
+                .on("mouseover", mouseOver )
+                .on("mouseleave", mouseLeave );
 
 			this.label_container.selectAll(".district-label")
 				.data(map_data)
@@ -128,11 +190,11 @@ class MapPlot {
 				.attr("transform", (d) => "translate(" + path_generator.centroid(d) + ")")
 				//.translate((d) => path_generator.centroid(d))
 				.attr("dy", ".35em")
-				.text((d) => d.properties.name);
+				.text((d) => d.properties.LGDNAME);
 
 			const r = 3;
 
-			this.makeColorbar(this.svg, color_scale, [50, 30], [20, this.svg_height - 2*30]);
+			this.makeColorbar(this.svg, color_scale, [50, 70], [20, this.svg_height - 3*30]);
 		});
 	}
 }
