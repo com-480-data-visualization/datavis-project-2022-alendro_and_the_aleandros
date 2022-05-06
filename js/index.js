@@ -4,3 +4,6 @@ d3.select("#mapAccess").on("click", function () {
 d3.select("#spicyFacts").on("click", function () {
     window.location = "spicy_facts.html";
 });
+d3.select("#pubHistory").on("click", function () {
+    window.location = "history.html";
+});
