@@ -23,7 +23,7 @@
 		.district {
 			stroke: rgb(25, 25, 25);
             stroke-width: 1px;
-            opacity: 0;
+            opacity: 1;
 		}
 
 		.district-label {
@@ -34,9 +34,20 @@
 	</style>
 </svg>
 
+<input id="slider" type="range" min="2010" max="2017" value="2010" step="1" />
+<span id="range">2010</span>
 
 <script src="lib/d3.min.js"></script>
 <script src="lib/topojson.min.js"></script>
 <script src="js/history.js"></script>
+<script type="text/javascript">
+	
+onload = function() {
+  var $ = function(id) { return document.getElementById(id); };
+  $('slider').oninput = function() { $('range').innerHTML = this.value; };
+  $('slider').oninput();
+};
+
+</script>
 </body>
 </html>
