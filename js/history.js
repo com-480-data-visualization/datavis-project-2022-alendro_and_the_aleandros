@@ -103,7 +103,7 @@ class MapPlot {
 			.range(["hsl(88,80%,80%)", "hsl(228,60%,30%)"])
 			.interpolate(d3.interpolateHcl);
 
-		const counts_promise = d3.csv("https://raw.githubusercontent.com/com-480-data-visualization/datavis-project-2022-alendro_and_the_aleandros/history_pubs/choropleth/pub_counts/ni_count_history.csv").then((data) => {
+		const counts_promise = d3.csv("https://raw.githubusercontent.com/com-480-data-visualization/datavis-project-2022-alendro_and_the_aleandros/master/choropleth/pub_counts/ni_count_history.csv").then((data) => {
 			let lad_to_counts = {};
 			data.forEach((row) => {
 				lad_to_counts[row.lad] = parseFloat(row.Y_2010);
@@ -112,7 +112,7 @@ class MapPlot {
 			return lad_to_counts;
 		});
 
-		const map_promise = d3.json("https://raw.githubusercontent.com/com-480-data-visualization/datavis-project-2022-alendro_and_the_aleandros/history_pubs/choropleth/topo/ni_topo_lgd.json").then((topojson_raw) => {
+		const map_promise = d3.json("https://raw.githubusercontent.com/com-480-data-visualization/datavis-project-2022-alendro_and_the_aleandros/master/choropleth/topo/ni_topo_lgd.json").then((topojson_raw) => {
             console.log(topojson_raw);
             const lgd_paths = topojson.feature(topojson_raw, topojson_raw.objects.lgd);
             console.log(lgd_paths);
