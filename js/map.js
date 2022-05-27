@@ -9,7 +9,12 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     accessToken: 'pk.eyJ1IjoicXVlbnRpbm11bGxlciIsImEiOiJjbDJoaHhuN3MwZHpjM2lwaG8zeTYxMGxjIn0.k47skeSjpBY-QnUQ7RvuJw'
 }).addTo(map);
 
-var markers = L.markerClusterGroup()
+var markers = L.markerClusterGroup({
+    iconCreateFunction: function (cluster) {    
+        var html = '<div class = "beer">' + cluster.getChildCount() + '</div>';
+        return L.divIcon({html: html, className: 'beerCluster', iconSize: L.point(32, 32)})
+    },
+})
 
 const pubs = d3.csv("https://raw.githubusercontent.com/com-480-data-visualization/datavis-project-2022-alendro_and_the_aleandros/master/open_pubs.csv")
 
@@ -17,7 +22,7 @@ pubs.then(function (data) {
     for (var i = 0; i < data.length; i++) {
         // The condition below is there to take care of some lat/lon being /N and /N.
         if(data[i].latitude != data[i].longitude) {
-            var marker = L.marker([data[i].latitude, data[i].longitude]);
+            var marker = L.marker([data[i].latitude, data[i].longitude], {icon: L.icon({iconUrl: "house.png", iconSize: [32, 32]})});
             marker.bindPopup(`Name: ${data[i].name}<br>Address: ${data[i].address}<br>District: ${data[i].local_authority}`).openPopup();
             markers.addLayer(marker);
         }
