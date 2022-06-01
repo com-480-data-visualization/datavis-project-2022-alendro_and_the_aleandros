@@ -1,37 +1,100 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <link rel = "stylesheet" href = "css/spicy_facts.css">
+  <head>
+    <link rel = "stylesheet" href = "css/spicy_facts.css">
 
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
-        integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
-        crossorigin=""/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
+    integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
+    crossorigin=""/>
 
-        <!-- Make sure you put this AFTER Leaflet's CSS -->
-        <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
-        integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
-        crossorigin=""></script>
-        <link rel = "stylesheet" href="./node_modules/leaflet.markercluster/dist/MarkerCluster.css">
-        <link rel = "stylesheet" href="./node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css">
-        <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
-        <script src="https://d3js.org/d3.v7.min.js" charset="utf-8"></script>
-        
-        <div>
-            <i class="arrow"></i>
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
+    integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
+    crossorigin=""></script>
+    <link rel = "stylesheet" href="./node_modules/leaflet.markercluster/dist/MarkerCluster.css">
+    <link rel = "stylesheet" href="./node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css">
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js" charset="utf-8"></script>
+    <script src="./js/leaflet-sidebar.js"></script>
+
+    <title>Spicy facts</title>
+
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <link
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+      crossorigin=""
+    />
+
+    <link rel="stylesheet" href="./css/leaflet-sidebar.css" />
+
+
+  </head>
+  <body>
+    <div id="loading_screen">
+      
+    </div>
+    <div id="sidebar" class="leaflet-sidebar collapsed">
+        <!-- Nav tabs -->
+        <div class="leaflet-sidebar-tabs">
+            <ul role="tablist"> <!-- top aligned tabs -->
+                <li><a href="#home" role="tab"><i class="fa fa-fire"></i></a></li>
+               
         </div>
-        <script src="js/goingback.js"></script>
-    </head>
+    
+        <!-- Tab panes -->
+        <div class="leaflet-sidebar-content">
+            <div class="leaflet-sidebar-pane" id="home">
+                <h1 class="leaflet-sidebar-header">
+                    Spicy facts
+                    <div class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></div>
+                </h1>
+                <div id="table_container" class="csvTable">
+                    <h2 style="color: #069; font: normal Arial, Helvetica, sans-serif;text-align:center" >Click on the fact to check the bar!</h2>
+                </div>
+                <div id="text_to_update">
+                  <h2></h2>
+                  <p style=" font: normal 16px Arial, Helvetica, sans-serif"></p>
+                </div>
+                <div id="update_link">
+                  <a></a>
+                </div>
+                
+            </div>
+        </div>
+    </div>
 
-    <body>
-        <div id="middle">
-        <table border="0" cellpadding="10" style="overflow-y: scroll;">
-            <tr>
-                <td><div id="map"></div></td>
-                <td><div id="table_container" class="csvTable"></div></td>
-            </tr>
-        </table>
-        <script>
-                var map = L.map('map').setView([54.05, -3.49], 5.75);
+    <div id="map"></div>
+
+    <script>
+      var map = L.map("map", {
+        zoomControl: false
+      });
+
+      function successCallback(résultat) {
+        console.log("WTF")
+          remove_loading_screen_callback();
+        }
+
+
+        function failureCallback(erreur) {
+          console.error("L'opération a échoué avec le message : " + erreur);
+        }
+
+
+      function remove_loading_screen_callback(){
+        document.getElementById("loading_screen").style.display = 'none';
+      }
+      map.setView([54.05, 0], 5.75);
+
 
                     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
                         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
@@ -43,38 +106,70 @@
                     }).addTo(map);
                 
                     var markers = L.markerClusterGroup()
-
-                d3.csv("https://raw.githubusercontent.com/com-480-data-visualization/datavis-project-2022-alendro_and_the_aleandros/master/open_pubs.csv").then(function (data) {
-                    for (var i = 0; i < data.length; i++) {
+          
+                    function load_markers(){
+                      return new Promise(() => {
+                        d3.csv("https://raw.githubusercontent.com/com-480-data-visualization/datavis-project-2022-alendro_and_the_aleandros/master/open_pubs.csv").then(function (data) {
+                        for (var i = 0; i < data.length; i++) {
                         // The condition below is there to take care of some lat/lon being /N and /N.
                         if(data[i].latitude != data[i].longitude) {
                             var marker = L.marker([data[i].latitude, data[i].longitude]);
                             marker.bindPopup(`Name: ${data[i].name}`).openPopup();
                             markers.addLayer(marker);
-                        }
+                      }
+                    }
+                    map.addLayer(markers);
+                    remove_loading_screen_callback();
+                  }
+                  )
+                 
+                 
                 }
-                map.addLayer(markers);
-                
-            });
+                )        
+              }
 
-            var table = d3.select("#table_container").append("table")
-            var thead = table.append('thead')
-            var	tbody = table.append('tbody');
-          // append the header row
-            var columns = ['Spicy fact'];
-            thead.append('tr')
-                .selectAll('th')
-                .data(columns).enter()
-                .append('th')
-                .text(function (column) { return column; });
+
+          load_markers()
+
+           
+
+            //map.addLayer(markers);
+
+      L.control
+        .zoom({
+          position: "topleft"
+        })
+        .addTo(map);
+    
+
+      var sidebar = L.control
+        .sidebar({ container: "sidebar", position: "right" })
+        .addTo(map)
+        .open("home");
+        
+        
+        var table = d3.select("#table_container").append("table");
+        var	tbody = table.append('tbody');// append the header row
+        
+    
             
-            var jsonData = [{"fact":"Oldest Bar", "lat": 54.05, "lon": -3}, {"fact":"Newest Bar", "lat": 55.08, "lon":-2}];
+            var jsonData = [
+              {"fact":"Oldest Bar", "lat": 51.74936, "lon": -0.34694, "text": "A lot of bars fight to obtain the title of \"Oldest Bar\" in the UK. But this one has the advantage to receive the distinction from the Guiness Book of records. However, the title was rested in 2000. Nevertheless, it seems to be a very good place to drink a pint", "link": "https://www.fightingcockssa.com/"},
+              {"fact":"Smallest Bar", "lat": 52.2448, "lon":0.71275, "text": "The Nutshell is supposedly", "link": "http://www.thenutshellpub.co.uk/"},
+              {"fact":"Biggest Bar", "lat": 51.3319, "lon":1.4237, "text":"", "link": "https://fr.tripadvisor.ch/Restaurant_Review-g186314-d12863074-Reviews-Royal_Victoria_Pavilion-Ramsgate_Isle_of_Thanet_Kent_England.html"},
+              {"fact":"Bar with the longest Name", "lat": 51.36996,  "lon":-0.285478, "text": "\"Love Your Greens Catering, King George Fields Indoor Bowls Club\" is the bar with the longest name according to the dataset with 63 letters", "link": "https://www.kgfindoorbowlsclub.co.uk/"},
+              {"fact":"Bar with the shortest Name", "lat": 52.191353, "lon":1.000189, "text": "\"v\" is the bar with the smallest name", "link": ""},
+              {"fact":"Bar furthest away from any other Bar", "lat": 56.620741, "lon":-6.069821, "text": "MacGonchas, what a madlad", "link": "https://macgochans-tobermory.co.uk/"},
+              {"fact":"Point furthest away from any other Bar in England", "lat": 55.08, "lon":-2, "text": "Here, there is no bar of course. But the neirest one is at tata away (as the crow flies). In england, you're therefore never that lost.", "link": ""}
+            ];
 
+            
             var rows = tbody.selectAll('tr')
             .data(jsonData)
             .enter()
             .append('tr');
 
+            var columns = ['Dummy column'];
             var cells = rows.selectAll('td')
             .data(function (row) {
               return columns.map(function (column) {
@@ -85,28 +180,36 @@
             .append('td')
             .text(function (d) {return d.value;})
             .on("click",
-             function(d, object){var latLon = getLongLatByName(object.value);
-                    var lat = latLon[0]
-                    var lon = latLon[1]
+             function(d, object){
+                    var all_data = get_all_data_by_fact(object.value);
+                    var lat = all_data[0]
+                    var lon = all_data[1]
+                    var new_text = all_data[2]
+                    var new_link = all_data[3]
+
+                    console.log(new_text)
+
+                    console.log(d3.select("#text_to_update").select("h2").node())
+                    
+                    d3.select("#text_to_update").select("h2").text(object.value)
+                    d3.select("#text_to_update").select('p').text(new_text);
+
+                    //Idea is to link the bar to google and so on
+                    console.log(new_link)
+                    d3.select('#update_link').select('a').attr("href", new_link).text(new_link == ""? "Website unavailable":"Check website")
+
+                    console.log(d3.select('#text_to_update').node())
                     console.log(object)
-                    map.flyTo([lat, lon], 12);});
+                    map.flyTo([lat, lon], 18);});
             
 
-            function getLongLatByName(name){
+            function get_all_data_by_fact(name){
                 for(let i = 0; i < jsonData.length; i++){
                     if(name == jsonData[i]["fact"]){
-                        return [jsonData[i]["lat"], jsonData[i]["lon"]];
+                        return [jsonData[i]["lat"], jsonData[i]["lon"], jsonData[i]["text"], jsonData[i]["link"]];
                     }
                 }
             };
-            
-                </script>
-
-           
-            
-            
-    
-            
-  
-    </body>
+    </script>
+  </body>
 </html>
