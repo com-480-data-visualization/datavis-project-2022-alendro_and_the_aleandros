@@ -89,8 +89,8 @@ class MapPlot {
 		// similar to scales
 		const projection = d3.geoNaturalEarth1()
 			.rotate([0, 0])
-			.center([-2, 54.4]) // WorldSpace: Latitude and longitude of center of Northern Ireland
-			.scale(7000)
+			.center([-4, 55.4]) // WorldSpace: Latitude and longitude of center of GB
+			.scale(3300)
 			.translate([this.svg_width / 2, this.svg_height / 2]) // SVG space
 			.precision(.1);
 
@@ -131,7 +131,7 @@ class MapPlot {
             return lad_paths.features;
         }); */
 
-        const map_promise = d3.json("https://raw.githubusercontent.com/com-480-data-visualization/datavis-project-2022-alendro_and_the_aleandros/history_pubs/choropleth/topo/gb_topo_lad.json").then((topojson_raw) => {
+        const map_promise = d3.json("https://raw.githubusercontent.com/com-480-data-visualization/datavis-project-2022-alendro_and_the_aleandros/history_pubs/choropleth/topo/uk_topo_single_lad.json").then((topojson_raw) => {
             const lad_paths = topojson.feature(topojson_raw, topojson_raw.objects.lad);
             return lad_paths.features;
         });
@@ -258,14 +258,14 @@ class MapPlot {
                     .on("mouseleave", mouseLeave );
             });
 
-			this.label_container.selectAll(".district-label")
+			/* this.label_container.selectAll(".district-label")
 				.data(map_data)
 				.enter().append("text")
 				.classed("district-label", true)
 				.attr("transform", (d) => "translate(" + path_generator.centroid(d) + ")")
 				//.translate((d) => path_generator.centroid(d))
 				.attr("dy", ".35em")
-				.text((d) => d.properties.LAD13NM);
+				.text((d) => d.properties.LAD13NM); */
 
 			const r = 3;
 
