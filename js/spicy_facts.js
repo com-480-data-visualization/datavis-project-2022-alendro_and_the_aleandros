@@ -33,7 +33,7 @@ var markers = L.markerClusterGroup({
         }
         return L.divIcon({html: html, className: 'beerCluster', iconAnchor: [50, 50]});
     },
-})
+});
 
 var sidebar = L.control.sidebar({ container: "sidebar", position: "right" }).addTo(map)
     .open("home");
