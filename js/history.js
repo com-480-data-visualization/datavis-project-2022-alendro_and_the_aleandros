@@ -89,8 +89,8 @@ class MapPlot {
 		// similar to scales
 		const projection = d3.geoNaturalEarth1()
 			.rotate([0, 0])
-			.center([-6.48, 54.4]) // WorldSpace: Latitude and longitude of center of Northern Ireland
-			.scale(13000)
+			.center([-4, 55.4]) // WorldSpace: Latitude and longitude of center of GB
+			.scale(3300)
 			.translate([this.svg_width / 2, this.svg_height / 2]) // SVG space
 			.precision(.1);
 
@@ -103,34 +103,72 @@ class MapPlot {
 			.range(["hsl(88,80%,80%)", "hsl(228,60%,30%)"])
 			.interpolate(d3.interpolateHcl);
 
+<<<<<<< HEAD
 		const counts_promise = d3.csv("https://raw.githubusercontent.com/com-480-data-visualization/datavis-project-2022-alendro_and_the_aleandros/master/choropleth/pub_counts/ni_count_history.csv").then((data) => {
+=======
+		const counts_promise = d3.csv("https://raw.githubusercontent.com/com-480-data-visualization/datavis-project-2022-alendro_and_the_aleandros/history_pubs/choropleth/pub_counts/pub_count_history.csv").then((data) => {
+>>>>>>> WIP full map
 			let lad_to_counts = {};
 			data.forEach((row) => {
-				lad_to_counts[row.lad] = parseFloat(row.Y_2010);
+                lad_to_counts[row.district + "_2010"] = parseFloat(row.Y_2010);
+                lad_to_counts[row.district + "_2011"] = parseFloat(row.Y_2011);
+                lad_to_counts[row.district + "_2012"] = parseFloat(row.Y_2012);
+                lad_to_counts[row.district + "_2013"] = parseFloat(row.Y_2013);
+                lad_to_counts[row.district + "_2014"] = parseFloat(row.Y_2014);
+                lad_to_counts[row.district + "_2015"] = parseFloat(row.Y_2015);
+                lad_to_counts[row.district + "_2016"] = parseFloat(row.Y_2016);
+                lad_to_counts[row.district + "_2017"] = parseFloat(row.Y_2017);
             });
             console.log(lad_to_counts);
 			return lad_to_counts;
 		});
 
+<<<<<<< HEAD
 		const map_promise = d3.json("https://raw.githubusercontent.com/com-480-data-visualization/datavis-project-2022-alendro_and_the_aleandros/master/choropleth/topo/ni_topo_lgd.json").then((topojson_raw) => {
+=======
+		/* const map_promise_ni = d3.json("https://raw.githubusercontent.com/com-480-data-visualization/datavis-project-2022-alendro_and_the_aleandros/history_pubs/choropleth/topo/ni_topo_lgd.json").then((topojson_raw) => {
+            const lad_paths = topojson.feature(topojson_raw, topojson_raw.objects.lad);
+            return lad_paths.features;
+        });
+        
+        const map_promise_sco = d3.json("https://raw.githubusercontent.com/com-480-data-visualization/datavis-project-2022-alendro_and_the_aleandros/history_pubs/choropleth/topo/sco_topo_lad.json").then((topojson_raw) => {
+>>>>>>> WIP full map
             console.log(topojson_raw);
-            const lgd_paths = topojson.feature(topojson_raw, topojson_raw.objects.lgd);
-            console.log(lgd_paths);
-            return lgd_paths.features;
-		});
+            const lad_paths = topojson.feature(topojson_raw, topojson_raw.objects.lad);
+            console.log(lad_paths);
+            return lad_paths.features;
+        }); */
 
+        const map_promise = d3.json("https://raw.githubusercontent.com/com-480-data-visualization/datavis-project-2022-alendro_and_the_aleandros/history_pubs/choropleth/topo/uk_topo_single_lad.json").then((topojson_raw) => {
+            const lad_paths = topojson.feature(topojson_raw, topojson_raw.objects.lad);
+            return lad_paths.features;
+        });
 
+        /* const map_promise = Promise.all([map_promise_ni, map_promise_sco]).then((map_promise_ni, map_promise_sco) => {
+            console.log(map_promise_ni);
+            console.log("hey");
+            console.log(map_promise_sco);
+            return map_promise_ni.concat.map_promise_sco;
+        }
+        ); */
+        
 		Promise.all([counts_promise, map_promise]).then((results) => {
 			let lad_to_counts = results[0];
 			let map_data = results[1];
 
 			map_data.forEach(lad => {
-				lad.properties.counts = lad_to_counts[lad.properties.LGDNAME];
+                lad.properties.counts_2010 = lad_to_counts[lad.properties.LAD13NM + "_2010"];
+                lad.properties.counts_2011 = lad_to_counts[lad.properties.LAD13NM + "_2011"];
+                lad.properties.counts_2012 = lad_to_counts[lad.properties.LAD13NM + "_2012"];
+                lad.properties.counts_2013 = lad_to_counts[lad.properties.LAD13NM + "_2013"];
+                lad.properties.counts_2014 = lad_to_counts[lad.properties.LAD13NM + "_2014"];
+                lad.properties.counts_2015 = lad_to_counts[lad.properties.LAD13NM + "_2015"];
+                lad.properties.counts_2016 = lad_to_counts[lad.properties.LAD13NM + "_2016"];
+                lad.properties.counts_2017 = lad_to_counts[lad.properties.LAD13NM + "_2017"];
 			});
 
             console.log(map_data);
             const counts = Object.values(lad_to_counts);
-            console.log(counts);
 
 			// color_scale.domain([d3.quantile(densities, .01), d3.quantile(densities, .99)]);
 			color_scale.domain([d3.min(counts), d3.max(counts)]);
@@ -144,7 +182,7 @@ class MapPlot {
                   .transition()
                   .duration(200)
                   .style("opacity", .5)
-                  .style("stroke-width", "0px")
+                  .style("stroke-width", "0.1px")
                 d3.select(this)
                   .transition()
                   .duration(200)
@@ -162,35 +200,80 @@ class MapPlot {
                   .transition()
                   .duration(200)
                   .style("stroke", "rgb(25, 25, 25)")
-                  .style("stroke-width", "0px")
+                  .style("stroke-width", "0.1px")
               }
 
 			//color the map according to the density of each canton
-			this.map_container.selectAll(".district")
+            this.map_container.selectAll(".district")
 				.data(map_data)
 				.enter()
 				.append("path")
 				.classed("district", true)
 				.attr("d", path_generator)
 				.style("fill", (d) => {
-                    if(typeof(d.properties.counts) == 'undefined') {
+                    if(typeof(d.properties.counts_2010) == 'undefined') {
                         return undefinded_color;
                     }
-                    return color_scale(d.properties.counts);
+                    return color_scale(d.properties.counts_2010);
                 })
                 .style("stroke", "transparent")
                 .style("opacity", 1)
                 .on("mouseover", mouseOver )
                 .on("mouseleave", mouseLeave );
 
-			this.label_container.selectAll(".district-label")
+            d3.selectAll("input").on("change", function change() {
+                var value = this.value;
+                var count_for_year = null;
+                d3.selectAll(".district")
+                    .attr("d", path_generator)
+                    .style("fill", (d) => {
+                        switch (value) {
+                            case "2010":
+                                count_for_year = d.properties.counts_2010;
+                                break;
+                            case "2011":
+                                count_for_year = d.properties.counts_2011;
+                                break;
+                            case "2012":
+                                count_for_year = d.properties.counts_2012;
+                                break;
+                            case "2013":
+                                count_for_year = d.properties.counts_2013;
+                                break;
+                            case "2014":
+                                count_for_year = d.properties.counts_2014;
+                                break;
+                            case "2015":
+                                count_for_year = d.properties.counts_2015;
+                                break;
+                            case "2016":
+                                count_for_year = d.properties.counts_2016;
+                                break;
+                            case "2017":
+                                count_for_year = d.properties.counts_2017;
+                                break;
+                        }
+                        
+                        if(typeof(count_for_year) == 'undefined') {
+                            return undefinded_color;
+                        }
+                        
+                        return color_scale(count_for_year);
+                    })
+                    .style("stroke", "transparent")
+                    .style("opacity", 1)
+                    .on("mouseover", mouseOver )
+                    .on("mouseleave", mouseLeave );
+            });
+
+			/* this.label_container.selectAll(".district-label")
 				.data(map_data)
 				.enter().append("text")
 				.classed("district-label", true)
 				.attr("transform", (d) => "translate(" + path_generator.centroid(d) + ")")
 				//.translate((d) => path_generator.centroid(d))
 				.attr("dy", ".35em")
-				.text((d) => d.properties.LGDNAME);
+				.text((d) => d.properties.LAD13NM); */
 
 			const r = 3;
 
