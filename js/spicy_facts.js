@@ -23,7 +23,17 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 
 L.control.zoom({position: "topleft"}).addTo(map);
 
-var markers = L.markerClusterGroup()
+var markers = L.markerClusterGroup({
+    iconCreateFunction: function (cluster) {
+        var n_markers = cluster.getChildCount();
+        if(n_markers < 100) {
+            var html = '<div class = "beer" style = "transform: scale(0.4)"><div style = "transform: scale(2.5); text-align: center; padding: 15px">' + n_markers + '</div></div>';
+        } else {
+            var html = '<div style = "display: flex; transform: scale(0.4)"><div class = "beer" style = "flex: 1; -webkit-transform: scaleX(-1); transform: scaleX(-1) rotate(-20deg);"></div><div class = "beer" style = "flex: 1; position: relative; left: 10px; transform: rotate(-20deg)"><div style = "transform: scale(2.5); text-align: center; padding: 15px">' + n_markers + '</div></div></div>';
+        }
+        return L.divIcon({html: html, className: 'beerCluster', iconAnchor: [50, 50]});
+    },
+})
 
 var sidebar = L.control.sidebar({ container: "sidebar", position: "right" }).addTo(map)
     .open("home");
@@ -39,20 +49,20 @@ function load_markers(){
             for (var i = 0; i < data.length; i++) {
                 // The condition below is there to take care of some lat/lon being /N and /N.
                 if(data[i].latitude != data[i].longitude) {
-                    var marker = L.marker([data[i].latitude, data[i].longitude]);
+                    var marker = L.marker([data[i].latitude, data[i].longitude], {icon: L.icon({iconUrl: "house.png", iconSize: [32, 32]})});
                     marker.bindPopup(`Name: ${data[i].name}`).openPopup();
                     markers.addLayer(marker);
                   }
                 }
-            var marker = L.marker([55.49057203,-2.30319293]); //adding the marker of the pub furthest away from any bar
+            var marker = L.marker([55.49057203,-2.30319293], {icon: L.icon({iconUrl: "house.png", iconSize: [32, 32]})}); //adding the marker of the pub furthest away from any bar
             marker.bindPopup("Name: Heaven's doors (just a suggestion)")
             markers.addLayer(marker)
 
-            var marker = L.marker([51.3319, 1.4237]) //Adding the marker of the biggest bar
+            var marker = L.marker([51.3319, 1.4237], {icon: L.icon({iconUrl: "house.png", iconSize: [32, 32]})}) //Adding the marker of the biggest bar
             marker.bindPopup("Name: Royal Victoria Pavilion")
             markers.addLayer(marker)
 
-            var marker = L.marker([52.2448, 0.71275]) //Adding the marker of the smallest bar
+            var marker = L.marker([52.2448, 0.71275], {icon: L.icon({iconUrl: "house.png", iconSize: [32, 32]})}) //Adding the marker of the smallest bar
             marker.bindPopup("Name: The Nutshell")
             markers.addLayer(marker)
 
