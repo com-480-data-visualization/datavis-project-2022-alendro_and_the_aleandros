@@ -4,9 +4,9 @@ var jsonData = [
     {"fact":"Smallest Bar", "lat": 52.2448, "lon":0.71275, "text": "The Nutshell is supposedly the smallest pub in the UK. The bar measures just 15ft (=4.57m) by 7ft (=2.13m) for a total surface of 105 feet squared (=9.75 meter squared). Nevertheless, it seems to be a very good place to drink a beer", "link": "http://www.thenutshellpub.co.uk/"},
     {"fact":"Biggest Bar", "lat": 51.3319, "lon":1.4237, "text":"The \"Royal Victoria Pavilion\" is supposedly the biggest bar in the UK. The Guardian writes that the building can seat up to 800 people with a total capacity of more than 1,400. And if it's not enough, it has a 6'500 feat squared (603 squared meter) terrace. Nevertheless, it seems to be a very good place to drink a cider", "link": "https://fr.tripadvisor.ch/Restaurant_Review-g186314-d12863074-Reviews-Royal_Victoria_Pavilion-Ramsgate_Isle_of_Thanet_Kent_England.html"},
     {"fact":"Bar with the longest Name", "lat": 51.36996,  "lon":-0.285478, "text": "\"Love Your Greens Catering, King George Fields Indoor Bowls Club\" is the bar with the longest name according to the dataset with 63 letters. It seems to be a very good place play bowls and drink a beer", "link": "https://www.kgfindoorbowlsclub.co.uk/"},
-    {"fact":"Bar with the shortest Name", "lat": 52.191353, "lon":1.000189, "text": "\"v\" is the bar with the smallest name with just one letter. It can be an error in our dataset or it has maybe a longer name in reality because we don't find any information checking the bar on google. Nevertheless, if it still existed, it would have been a very nice place to grab a drink", "link": ""},
+    {"fact":"Bar with the shortest Name", "lat": 51.595438, "lon":-3.782497, "text": "\"G6\" is the bar with the smallest name with just two letters. This bar also does nightclub and live music venue. It seems like a great place to spend an evening at any point in the week. Sadly, they only possess a Facebook page and no website...", "link": "https://www.facebook.com/G6club/"},
     {"fact":"Bar furthest away from any other Bar", "lat": 56.620741, "lon":-6.069821, "text": "If you're at the \"MacGochans\" and someone tells you \"Alright mate, we'll go to another bar, want to come?\". Answer no. According to our dataset, there is no other bar in the vicinity of this one. You would have to cross the sea in order to go to another bar. You better stay where you are...as it seems to be a nice place to drink a beer", "link": "https://macgochans-tobermory.co.uk/"},
-    {"fact":"Point furthest away from any other Bar in England", "lat": 55.49057203, "lon":-2.30319293, "text": "Here, there is no bar of course. But the neirest one is at 13 kms away (as the crow flies). If you think about it, it's maybe the best place to start your bar. We are sure it we'll be a very nice place to drink your beer", "link": "https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley"}
+    {"fact":"Point furthest away from any other Bar in England", "lat": 54.620861, "lon":-2.275599, "text": "Here, there is no bar of course. But the neirest one is at 9.5 kms away (as the crow flies). If you think about it, it's maybe the best place to start your bar. We are sure it we'll be a very nice place to drink your beer", "link": "https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley"}
   ];
 
 var map = L.map("map", {zoomControl: false});
@@ -54,7 +54,7 @@ function load_markers(){
                     markers.addLayer(marker);
                   }
                 }
-            var marker = L.marker([55.49057203,-2.30319293], {icon: L.icon({iconUrl: "house.png", iconSize: [32, 32]})}); //adding the marker of the pub furthest away from any bar
+            var marker = L.marker([54.620861, -2.275599], {icon: L.icon({iconUrl: "house.png", iconSize: [32, 32]})}); //adding the marker of the pub furthest away from any bar
             marker.bindPopup("Name: Heaven's doors (just a suggestion)")
             markers.addLayer(marker)
 
