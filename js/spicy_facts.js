@@ -45,7 +45,7 @@ function  remove_loading_screen_callback(){
 
 function load_markers(){
     return new Promise(() => {
-        d3.csv("https://raw.githubusercontent.com/com-480-data-visualization/datavis-project-2022-alendro_and_the_aleandros/master/open_pubs.csv").then(function (data) {
+        d3.csv("https://raw.githubusercontent.com/com-480-data-visualization/datavis-project-2022-alendro_and_the_aleandros/master/data/districts/open_pubs.csv").then(function (data) {
             for (var i = 0; i < data.length; i++) {
                 // The condition below is there to take care of some lat/lon being /N and /N.
                 if(data[i].latitude != data[i].longitude) {

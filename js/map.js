@@ -21,7 +21,7 @@ var markers = L.markerClusterGroup({
     },
 })
 
-const pubs = d3.csv("https://raw.githubusercontent.com/com-480-data-visualization/datavis-project-2022-alendro_and_the_aleandros/master/open_pubs.csv")
+const pubs = d3.csv("https://raw.githubusercontent.com/com-480-data-visualization/datavis-project-2022-alendro_and_the_aleandros/master/data/districts/open_pubs.csv")
 
 pubs.then(function (data) {
     for (var i = 0; i < data.length; i++) {
